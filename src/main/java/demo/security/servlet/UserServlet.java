@@ -1,6 +1,7 @@
 package demo.security.servlet;
 
 import demo.security.util.DBUtils;
+import demo.security.util.RateLimitFilter;
 import demo.security.util.SessionHeader;
 import org.apache.commons.codec.binary.Base64;
 
@@ -17,6 +18,7 @@ import java.util.List;
 public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (!RateLimitFilter.allowRequest(request, response)) return;
         String user = request.getParameter("username");
         try {
             DBUtils db = new DBUtils();
@@ -49,6 +51,7 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (!RateLimitFilter.allowRequest(request, response)) return;
         SessionHeader sessionHeader = getSessionHeader(request);
         if (sessionHeader == null) return;
         String user = sessionHeader.getUsername();

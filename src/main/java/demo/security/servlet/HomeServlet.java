@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import demo.security.util.RateLimitFilter;
+
 @WebServlet("/helloWorld")
 public class HomeServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -17,9 +19,11 @@ public class HomeServlet extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
-
+    @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {
+        if (!RateLimitFilter.allowRequest(request, response)) return;
+
         String name = request.getParameter("name").trim();
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
@@ -27,8 +31,11 @@ public class HomeServlet extends HttpServlet {
         out.close();
     }
 
+    @Override
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response) throws ServletException, IOException {
+        if (!RateLimitFilter.allowRequest(request, response)) return;
+
         // TODO Auto-generated method stub
         doGet(request, response);
     }
