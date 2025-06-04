@@ -1,5 +1,6 @@
 package demo.security.servlet;
 
+import demo.security.util.RateLimitFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -18,8 +19,10 @@ public class HomeServlet extends HttpServlet {
     }
 
 
+    @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {
+        if (!RateLimitFilter.allowRequest(request, response)) return;
         String name = request.getParameter("name").trim();
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
@@ -27,8 +30,10 @@ public class HomeServlet extends HttpServlet {
         out.close();
     }
 
+    @Override
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response) throws ServletException, IOException {
+        if (!RateLimitFilter.allowRequest(request, response)) return;
         // TODO Auto-generated method stub
         doGet(request, response);
     }

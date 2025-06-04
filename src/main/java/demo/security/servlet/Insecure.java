@@ -17,9 +17,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import demo.security.util.RateLimitFilter;
+
 public class Insecure {
 
   public void badFunction(HttpServletRequest request) throws IOException {
+        if (!RateLimitFilter.allowRequest(request, null)) return;
     String obj = request.getParameter("data");
     ObjectMapper mapper = new ObjectMapper();
     mapper.enableDefaultTyping();
